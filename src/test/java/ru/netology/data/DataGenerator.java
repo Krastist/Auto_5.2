@@ -6,14 +6,13 @@ import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import lombok.Value;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Locale;
 
 import static io.restassured.RestAssured.given;
 
 public class DataGenerator {
-    private static RequestSpecification requestSpec = new RequestSpecBuilder()
+    private static final RequestSpecification requestSpec = new RequestSpecBuilder()
             .setBaseUri("http://localhost")
             .setPort(9999)
             .setAccept(ContentType.JSON)
@@ -21,12 +20,12 @@ public class DataGenerator {
             .log(LogDetail.ALL)
             .build();
 
-    private static Faker faker = new Faker(new Locale("en"));
+    private static final Faker faker = new Faker(new Locale("en"));
 
     private DataGenerator() {
     }
 
-    private static void request(RegistrationDto user) {
+    private static void sendRequest(RegistrationData user) {
         given()
                 .spec(requestSpec)
                 .body(user)
@@ -36,12 +35,12 @@ public class DataGenerator {
                 .statusCode(200);
     }
 
-    public static String randomLogin() {
-        String login = faker.name().username();
+    public static String getRandomLogin() {
+        String login = faker.name().firstName();
         return login;
     }
 
-    public static String randomPassword() {
+    public static String getRandomPassword() {
         String password = faker.internet().password();
         return password;
     }
@@ -50,20 +49,20 @@ public class DataGenerator {
         private Registration() {
         }
 
-        public static RegistrationDto getUser(String status) {
-            var user = new RegistrationDto(randomLogin(), randomPassword(), status);
+        public static RegistrationData getUser(String status) {
+            var user = new RegistrationData(getRandomLogin(), getRandomPassword(), status);
             return user;
         }
 
-        public static RegistrationDto getRegisteredUser(String status) {
+        public static RegistrationData getRegisteredUser(String status) {
             var registeredUser = getUser(status);
-            request(registeredUser);
+            sendRequest(registeredUser);
             return registeredUser;
         }
     }
 
     @Value
-    public static class RegistrationDto {
+    public static class RegistrationData {
         String login;
         String password;
         String status;

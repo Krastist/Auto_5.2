@@ -1,18 +1,17 @@
 package ru.netology.test;
 
-import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.*;
 
+import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static ru.netology.data.DataGenerator.Registration.getRegisteredUser;
 import static ru.netology.data.DataGenerator.Registration.getUser;
-import static ru.netology.data.DataGenerator.randomLogin;
-import static ru.netology.data.DataGenerator.randomPassword;
+import static ru.netology.data.DataGenerator.getRandomLogin;
+import static ru.netology.data.DataGenerator.getRandomPassword;
 
 class AuthTest {
     @BeforeEach
@@ -22,56 +21,56 @@ class AuthTest {
 
     @Test
     void successTest() {
-        var registeredUser = getRegisteredUser("Active");
-        $("[data-test-id='login'] input").setValue(registeredUser.getLogin());
-        $("[data-test-id='password'] input").setValue(registeredUser.getPassword());
+        var registeredUser = getRegisteredUser("active");
+        $("[data-test-id=login] input").setValue(registeredUser.getLogin());
+        $("[data-test-id=password] input").setValue(registeredUser.getPassword());
         $("button.button").click();
-        $("h2").shouldHave(Condition.exactText("Личный кабинет")).shouldBe(visible);
+        $("h2").shouldHave(exactText("Личный кабинет")).shouldBe(visible);
     }
 
     @Test
     void notRegisteredUserTest() {
-        var notRegisteredUser = getUser("Active");
-        $("[data-test-id='login'] input").setValue(notRegisteredUser.getLogin());
-        $("[data-test-id='password'] input").setValue(notRegisteredUser.getPassword());
+        var notRegisteredUser = getUser("active");
+        $("[data-test-id=login] input").setValue(notRegisteredUser.getLogin());
+        $("[data-test-id=password] input").setValue(notRegisteredUser.getPassword());
         $("button.button").click();
-        $("[data-test-id='error-notification'] .notification__content")
-                .shouldHave(Condition.exactText("Ошибка! Неверно указан логин или пароль"))
+        $("[data-test-id=error-notification] .notification__content")
+                .shouldHave(exactText("Ошибка! Неверно указан логин или пароль"))
                 .shouldBe(visible);
     }
 
     @Test
-    void blockedUserTest() {
-        var blockedUser = getUser("blocked");
-        $("[data-test-id='login'] input").setValue(blockedUser.getLogin());
-        $("[data-test-id='password'] input").setValue(blockedUser.getPassword());
+    void blocedUserTest() {
+        var blockedUser = getRegisteredUser("blocked");
+        $("[data-test-id=login] input").setValue(blockedUser.getLogin());
+        $("[data-test-id=password] input").setValue(blockedUser.getPassword());
         $("button.button").click();
-        $("[data-test-id='error-notification'] .notification__content")
-                .shouldHave(Condition.exactText("Ошибка! Пользователь заблокирован"))
+        $("[data-test-id=error-notification] .notification__content")
+                .shouldHave(exactText("Ошибка! Пользователь заблокирован"))
                 .shouldBe(visible);
     }
 
     @Test
     void wrongLoginTest() {
-        var registeredUser = getRegisteredUser("Active");
-        var wrongLogin = randomLogin();
-        $("[data-test-id='login'] input").setValue(wrongLogin);
-        $("[data-test-id='password'] input").setValue(registeredUser.getPassword());
+        var registeredUser = getRegisteredUser("active");
+        var wrongLogin = getRandomLogin();
+        $("[data-test-id=login] input").setValue(wrongLogin);
+        $("[data-test-id=password] input").setValue(registeredUser.getPassword());
         $("button.button").click();
-        $("[data-test-id='error-notification'] .notification__content")
-                .shouldHave(Condition.exactText("Ошибка! Неверно указан логин или пароль"))
+        $("[data-test-id=error-notification] .notification__content")
+                .shouldHave(exactText("Ошибка! Неверно указан логин или пароль"))
                 .shouldBe(visible);
     }
 
     @Test
     void wrongPasswordTest() {
-        var registeredUser = getRegisteredUser("Active");
-        var wrongPassword = randomPassword();
-        $("[data-test-id='login'] input").setValue(registeredUser.getLogin());
-        $("[data-test-id='password'] input").setValue(wrongPassword);
+        var registeredUser = getRegisteredUser("active");
+        var wrongPassword = getRandomPassword();
+        $("[data-test-id=login] input").setValue(registeredUser.getLogin());
+        $("[data-test-id=password] input").setValue(wrongPassword);
         $("button.button").click();
-        $("[data-test-id='error-notification'] .notification__content")
-                .shouldHave(Condition.exactText("Ошибка! Неверно указан логин или пароль"))
+        $("[data-test-id=error-notification] .notification__content")
+                .shouldHave(exactText("Ошибка! Неверно указан логин или пароль"))
                 .shouldBe(visible);
     }
 }
